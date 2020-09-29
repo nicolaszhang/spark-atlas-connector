@@ -620,7 +620,7 @@ object CommandsHarvester extends AtlasEntityUtils with Logging {
     private def getJdbcEnity(options: Map[String, String]): SACAtlasEntityWithDependencies = {
       val url = options.getOrElse("url", "")
       val tableName = options.getOrElse("dbtable", "")
-      external.rdbmsTableToEntity(url, tableName)
+      external.rdbmsTableToEntity(url, tableName, options.getOrElse("driver", ""))
     }
   }
 }

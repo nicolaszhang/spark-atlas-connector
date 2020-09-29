@@ -207,14 +207,24 @@ object external {
    * @param tableName
    * @return
    */
-  def rdbmsTableToEntity(url: String, tableName: String): SACAtlasEntityWithDependencies = {
-    val jdbcEntity = new AtlasEntity(RDBMS_TABLE)
-
+  def rdbmsTableToEntity(url: String, tableName: String, driver: String): SACAtlasEntityWithDependencies = {
     val databaseName = JdbcUtils.getDatabaseName(url)
-    jdbcEntity.setAttribute("qualifiedName", getRdbmsQualifiedName(databaseName, tableName))
-    jdbcEntity.setAttribute("name", tableName)
+    if (driver.equals("com.teradata.jdbc.TeraDriver"))
+    {
+      val serverName = JdbcUtils.getServerName(url)
+      val teradataEntity = new AtlasEntity("teradata_table")
+      teradataEntity.setAttribute("qualifiedName", s"teradata://${serverName}/${databaseName}/${tableName}")
+      teradataEntity.setAttribute("name", tableName)
+      SACAtlasEntityWithDependencies(teradataEntity)
+    }
+    else
+    {
+      val jdbcEntity = new AtlasEntity(RDBMS_TABLE)
+      jdbcEntity.setAttribute("qualifiedName", getRdbmsQualifiedName(databaseName, tableName))
+      jdbcEntity.setAttribute("name", tableName)
 
-    SACAtlasEntityWithDependencies(jdbcEntity)
+      SACAtlasEntityWithDependencies(jdbcEntity)
+    }
   }
 
   /**

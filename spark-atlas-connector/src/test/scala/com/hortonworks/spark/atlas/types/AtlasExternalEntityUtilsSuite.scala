@@ -74,7 +74,7 @@ class AtlasExternalEntityUtilsSuite
 
   test("convert jdbc properties to rdbms entity") {
     val tableName = "employee"
-    val rdbmsEntity = external.rdbmsTableToEntity("jdbc:mysql://localhost:3306/default", tableName)
+    val rdbmsEntity = external.rdbmsTableToEntity("jdbc:mysql://localhost:3306/default", tableName, "test")
 
     rdbmsEntity.entity.getTypeName should be (external.RDBMS_TABLE)
     rdbmsEntity.entity.getAttribute("name") should be (tableName)

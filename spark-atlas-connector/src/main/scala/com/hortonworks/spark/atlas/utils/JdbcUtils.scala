@@ -50,6 +50,13 @@ object JdbcUtils {
       ""
   }
 
+  def getServerName(url: String) : String = url match {
+    case url if url.startsWith(TERADATA_PREFIX) => getServerNameForTeradataFormat(url)
+    case _ =>
+        logWarn(s"unsupported jdbc driver for url: $url")
+         ""
+  }
+
   /**
    * Retrieves database name where in hose:port/dbname format
    */
@@ -82,13 +89,20 @@ object JdbcUtils {
    * Retrieves the database name based on Teradata format
    */
   private def getDatabaseNameTeradataFormat(url: String): String = {
-    val databaseKey = "/DATABASE="
+    val databaseKey = "/database="
     val parsedUrl = url.substring(url.indexOf(databaseKey) + databaseKey.length)
     if (parsedUrl.contains("/")) {
       return parsedUrl.substring(0, parsedUrl.indexOf("/"))
     }
 
     parsedUrl
+  }
+
+  private def getServerNameForTeradataFormat(url: String): String = {
+    val databaseKey = "/database="
+    val prefix = "jdbc:teradata://"
+
+    url.substring(url.indexOf(prefix) + prefix.length, url.indexOf(databaseKey))
   }
 
   /**
